@@ -7,18 +7,15 @@ Create GraphQL schemas with ES7 classes and decorators
 
     npm install graphql-schema
 
-## Example
+## Usage
 
 ```js
-import { graphql, GraphQLSchema, GraphQLString } from 'graphql-schema';
-import { type, description, listOf } from 'graphql-schema';
-
-@type('RootQueryType')
+@object('RootQueryType', `TODO: Description`)
 class RootQueryType {
-  @type(GraphQLString)
-  @description(`hello field description`)
-  hello() {
-    return 'world';
+  @field(GraphQLString, `Say Hello to someone`)
+  @arg('name', GraphQLString, `The name of the person to say Hello to`)
+  hello(root, {name}) {
+    return `Hello, ${name}`;
   }
 }
 ```
@@ -28,26 +25,58 @@ becomes
 ```js
 var RootQueryType = new GraphQLObjectType({
   name: 'RootQueryType',
+  description: 'TODO: Description'
   fields: {
     hello: {
       type: GraphQLString,
-      resolve: () => 'world'
+      description: 'Say Hello to someone',
+      args: {
+        name: {
+          name: 'name',
+          type: GraphQLString,
+          description: 'The name of the person to say Hello to'
+        }
+      }
+      resolve: (root, {name}) => `Hello, ${name}`;
     }
   }
 });
 ```
 
-## Helpers
-
-### listOf(type)
+## Example
 
 ```js
-listOf(GraphQLString) => new GraphQLList(GraphQLString)
+import { graphql, GraphQLSchema, GraphQLString } from 'graphql-schema';
+import { object, field, arg } from 'graphql-schema';
+
+@object('RootQueryType', `TODO: Description`)
+class RootQueryType {
+  @field(GraphQLString, `Say Hello to someone`)
+  @arg('name', GraphQLString, `The name of the person to say Hello to`)
+  hello(root, {name}) {
+    return `Hello, ${name}`;
+  }
+}
+
+const schema = new GraphQLSchema({
+  query: RootQueryType
+});
+
+graphql(schema, '{ hello(name: "Mark") }').then(result => {
+  console.log(JSON.stringify(result)); // "Hello, Mark"
+});
 ```
+
+## Decorators
+
+### object(name, description = null)
+
+### field(type, description = null)
+
+### arg(name, type, description = null)
 
 ## TODO
 
-* Field argument types & descriptions (```@arg('id', `The user ID to find`)```)
-* More fluent interface? `@type(class)` becomes `@object(class)`, `@type(property)` becomes `@returns(property)`
-* Support for interfaces and enums
+* Interfaces, enums, deprecation
+* Bind functions to `root`
 * Default types to NotNull and require a `nullable()` wrapper?

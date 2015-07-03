@@ -1,37 +1,36 @@
 import { GraphQLObjectType } from 'graphql';
 
-function generateType(name, prototype) {
-  return new GraphQLObjectType({
-    name: name,
-    description: prototype.__graphqlDescription,
-    fields: () => (prototype.__graphqlFields)
-  });
-}
-
-export function type(nameOrType) {
-  return function typeDecorator(target, key, descriptor) {
-    if (typeof key === 'undefined') {
-      return generateType(nameOrType, target.prototype);
-    }
-
-    target.__graphqlFields = target.__graphqlFields || {};
-    let field = target.__graphqlFields[key] = target.__graphqlFields[key] || {};
-
-    field.resolve = descriptor.value;
-    field.type = nameOrType;
+export function object(name, description = null) {
+  return function objectDecorator(target) {
+    return new GraphQLObjectType({
+      name: name,
+      description: description,
+      fields: () => (target.prototype.__graphqlFields)
+    });
   };
 }
 
-export function description(desc) {
-  return function descriptionDecorator(target, key) {
-    if (typeof key === 'undefined') {
-      target.prototype.__graphqlDescription = desc;
-      return;
-    }
-
+export function field(type, description = null) {
+  return function fieldDecorator(target, key, descriptor) {
     target.__graphqlFields = target.__graphqlFields || {};
-    let field = target.__graphqlFields[key] = target.__graphqlFields[key] || {};
+    const fd = target.__graphqlFields[key] = target.__graphqlFields[key] || {};
 
-    field.description = desc;
+    fd.resolve = descriptor.value;
+    fd.description = description;
+    fd.type = type;
+  };
+}
+
+export function arg(name, type, description = null) {
+  return function argDecorator(target, key) {
+    target.__graphqlFields = target.__graphqlFields || {};
+    const fd = target.__graphqlFields[key] = target.__graphqlFields[key] || {};
+    const args = fd.args = fd.args || {};
+
+    args[name] = {
+      name,
+      type,
+      description
+    };
   };
 }

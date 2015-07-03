@@ -18,11 +18,5 @@ export {
   GraphQLID
 } from 'graphql';
 
-export {
-  type,
-  description
-} from './decorators';
-
-export {
-  listOf
-} from './types';
+export * from './decorators';
+export * from './types';
