@@ -2,11 +2,26 @@ import { GraphQLObjectType } from 'graphql';
 
 export function object(name, description = null) {
   return function objectDecorator(target) {
-    return new GraphQLObjectType({
-      name: name,
-      description: description,
-      fields: () => (target.prototype.__graphqlFields)
-    });
+    const typeGenerator = target.__graphqlTypeGenerator = function typeGenerator() {
+      return new GraphQLObjectType({
+        name: name,
+        description: description,
+        fields: () => (target.prototype.__graphqlFields)
+      });
+    };
+
+    for (const key of Object.keys(target.prototype.__graphqlFields)) {
+      const fd = target.prototype.__graphqlFields[key];
+      const { type } = fd;
+
+      if (type.__graphqlTypeGenerator) {
+        fd.type = type.__graphqlTypeGenerator();
+      } else if (type.ofType && type.ofType.__graphqlTypeGenerator) {
+        type.ofType = type.ofType.__graphqlTypeGenerator();
+      }
+    }
+
+    return typeGenerator();
   };
 }
 
