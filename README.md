@@ -13,7 +13,7 @@ Create GraphQL schemas with ES7 classes and decorators
 @object('RootQueryType', `TODO: Description`)
 class RootQueryType {
   @field(GraphQLString, `Say hello to someone`)
-  @arg('name', GraphQLString, `The name of the person to say hello to`)
+  @arg(GraphQLString, 'name', `The name of the person to say hello to`)
   hello(root, {name}) {
     return `Hello, ${name}`;
   }
@@ -75,7 +75,7 @@ graphql(schema, '{ hello(name: "Mark") }').then(result => {
 
 ### field(type, description = null)
 
-### arg(name, type, description = null)
+### arg(type, name, description = null)
 
 ### deprecated(reason)
 
