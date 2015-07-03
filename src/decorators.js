@@ -21,7 +21,7 @@ export function field(type, description = null) {
   };
 }
 
-export function arg(name, type, description = null) {
+export function arg(type, name, description = null) {
   return function argDecorator(target, key) {
     target.__graphqlFields = target.__graphqlFields || {};
     const fd = target.__graphqlFields[key] = target.__graphqlFields[key] || {};
@@ -32,5 +32,14 @@ export function arg(name, type, description = null) {
       type,
       description
     };
+  };
+}
+
+export function deprecated(reason) {
+  return function deprecatedDecorator(target, key) {
+    target.__graphqlFields = target.__graphqlFields || {};
+    const fd = target.__graphqlFields[key] = target.__graphqlFields[key] || {};
+
+    fd.deprecationReason = reason;
   };
 }

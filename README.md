@@ -12,8 +12,8 @@ Create GraphQL schemas with ES7 classes and decorators
 ```js
 @object('RootQueryType', `TODO: Description`)
 class RootQueryType {
-  @field(GraphQLString, `Say Hello to someone`)
-  @arg('name', GraphQLString, `The name of the person to say Hello to`)
+  @field(GraphQLString, `Say hello to someone`)
+  @arg('name', GraphQLString, `The name of the person to say hello to`)
   hello(root, {name}) {
     return `Hello, ${name}`;
   }
@@ -52,7 +52,7 @@ import { object, field, arg } from 'graphql-schema';
 @object('RootQueryType', `TODO: Description`)
 class RootQueryType {
   @field(GraphQLString, `Say Hello to someone`)
-  @arg('name', GraphQLString, `The name of the person to say Hello to`)
+  @arg(GraphQLString, 'name', `The name of the person to say Hello to`)
   hello(root, {name}) {
     return `Hello, ${name}`;
   }
@@ -67,13 +67,17 @@ graphql(schema, '{ hello(name: "Mark") }').then(result => {
 });
 ```
 
-## Decorators
+## Class Decorators
 
 ### object(name, description = null)
+
+## Method Decorators
 
 ### field(type, description = null)
 
 ### arg(name, type, description = null)
+
+### deprecated(reason)
 
 ## TODO
 
