@@ -11,7 +11,40 @@ The API has been changed significantly. Rather than hacking ES7 classes, `graphq
 
     npm install graphql-schema
 
-## Example
+## Basic Usage
+
+```js
+const rootQueryType = objectType('RootQueryType', 'TODO: Description')
+  .field('hello', GraphQLString, 'Say hello to someone')
+  .arg('name', GraphQLString, 'The name of the person to say hello to')
+  .resolve(root, {name} => `Hello, ${name}`)
+  .end()
+```
+
+becomes
+
+```js
+var RootQueryType = new GraphQLObjectType({
+  name: 'RootQueryType',
+  description: 'TODO: Description'
+  fields: {
+    hello: {
+      type: GraphQLString,
+      description: 'Say Hello to someone',
+      args: {
+        name: {
+          name: 'name',
+          type: GraphQLString,
+          description: 'The name of the person to say Hello to'
+        }
+      }
+      resolve: (root, {name}) => `Hello, ${name}`;
+    }
+  }
+});
+```
+
+## Full Example
 
 ```js
 import { interfaceType, objectType, enumType, schemaFrom, listOf, notNull } from 'graphql-schema';
