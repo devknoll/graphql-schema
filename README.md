@@ -16,8 +16,8 @@ The API has been changed significantly. Rather than hacking ES7 classes, `graphq
 ```js
 const rootQueryType = objectType('RootQueryType', 'TODO: Description')
   .field('hello', GraphQLString, 'Say hello to someone')
-  .arg('name', GraphQLString, 'The name of the person to say hello to')
-  .resolve(root, {name} => `Hello, ${name}`)
+    .arg('name', GraphQLString, 'The name of the person to say hello to')
+    .resolve(root, {name} => `Hello, ${name}`)
   .end()
 ```
 
