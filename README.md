@@ -118,6 +118,16 @@ Define a new `GraphQLList(type)`.
 
 Define a new `GraphQLNonNull(type)`.
 
+# Cyclic Types
+
+`graphql-schema` supports cyclic types. Instead of passing in a reference, just pass in a function instead:
+
+```js
+const userType = objectType('User')
+  .field('friends', () => listOf(userType))
+  .end();
+```
+
 # Thanks
 
 Thanks to [Florent Cailhol](https://github.com/ooflorent) for the chainable interface idea!
