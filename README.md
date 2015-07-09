@@ -18,13 +18,13 @@ const rootQueryType = objectType('RootQueryType', 'TODO: Description')
   .field('hello', GraphQLString, 'Say hello to someone')
     .arg('name', GraphQLString, 'The name of the person to say hello to')
     .resolve(root, {name} => `Hello, ${name}`)
-  .end()
+  .end();
 ```
 
 becomes
 
 ```js
-var RootQueryType = new GraphQLObjectType({
+var rootQueryType = new GraphQLObjectType({
   name: 'RootQueryType',
   description: 'TODO: Description'
   fields: {
