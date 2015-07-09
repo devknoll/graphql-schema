@@ -112,6 +112,16 @@ const queryType = objectType('Query')
 const starWarsSchema = schemaFrom(queryType);
 ```
 
+# Cyclic Types
+
+`graphql-schema` supports cyclic types. Instead of passing in a reference, just pass in a function instead:
+
+```js
+const userType = objectType('User')
+  .field('friends', () => listOf(userType))
+  .end();
+```
+
 ## API
 
 ### enumType(name, description)
@@ -150,16 +160,6 @@ Define a new `GraphQLList(type)`.
 ## notNull(type)
 
 Define a new `GraphQLNonNull(type)`.
-
-# Cyclic Types
-
-`graphql-schema` supports cyclic types. Instead of passing in a reference, just pass in a function instead:
-
-```js
-const userType = objectType('User')
-  .field('friends', () => listOf(userType))
-  .end();
-```
 
 # Thanks
 
