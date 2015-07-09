@@ -1,22 +1,4 @@
-export {
-  graphql,
-  GraphQLSchema,
-
-  GraphQLScalarType,
-  GraphQLObjectType,
-  GraphQLInterfaceType,
-  GraphQLUnionType,
-  GraphQLEnumType,
-  GraphQLInputObjectType,
-  GraphQLList,
-  GraphQLNonNull,
-
-  GraphQLInt,
-  GraphQLFloat,
-  GraphQLString,
-  GraphQLBoolean,
-  GraphQLID
-} from 'graphql';
-
-export * from './decorators';
-export * from './types';
+export interfaceType from './interface';
+export objectType from './object';
+export enumType from './enumeration';
+export { schemaFrom, listOf, notNull } from './types';

@@ -1,86 +1,123 @@
 graphql-schema
 ==============
 
-Create GraphQL schemas with ES7 classes and decorators
+Create GraphQL schemas with a fluent/chainable interface.
+
+**Notice to <=0.3.0 users:**
+
+The API has been changed significantly. Rather than hacking ES7 classes, `graphql-schema` now implements a fluent/chainable API. As a bonus, we can define entire schemas.
 
 ## Installation
 
     npm install graphql-schema
 
-## Usage
-
-```js
-@object('RootQueryType', `TODO: Description`)
-class RootQueryType {
-  @field(GraphQLString, `Say hello to someone`)
-  @arg(GraphQLString, 'name', `The name of the person to say hello to`)
-  hello(root, {name}) {
-    return `Hello, ${name}`;
-  }
-}
-```
-
-becomes
-
-```js
-var RootQueryType = new GraphQLObjectType({
-  name: 'RootQueryType',
-  description: 'TODO: Description'
-  fields: {
-    hello: {
-      type: GraphQLString,
-      description: 'Say Hello to someone',
-      args: {
-        name: {
-          name: 'name',
-          type: GraphQLString,
-          description: 'The name of the person to say Hello to'
-        }
-      }
-      resolve: (root, {name}) => `Hello, ${name}`;
-    }
-  }
-});
-```
-
 ## Example
 
 ```js
-import { graphql, GraphQLSchema, GraphQLString } from 'graphql-schema';
-import { object, field, arg } from 'graphql-schema';
+import { interfaceType, objectType, enumType, schemaFrom, listOf, notNull } from 'graphql-schema';
 
-@object('RootQueryType', `TODO: Description`)
-class RootQueryType {
-  @field(GraphQLString, `Say Hello to someone`)
-  @arg(GraphQLString, 'name', `The name of the person to say Hello to`)
-  hello(root, {name}) {
-    return `Hello, ${name}`;
-  }
-}
+const episodeEnum = enumType('Episode',
+    'One of the films in the Star Wars Trilogy')
+  .value('NEWHOPE', 4, 'Released in 1977.')
+  .value('EMPIRE', 5, 'Released in 1980.')
+  .value('JEDI', 6, 'Released in 1983.')
+  .end();
 
-const schema = new GraphQLSchema({
-  query: RootQueryType
-});
+const characterInterface = interfaceType('Character',
+    'A character in the Star Wars Trilogy')
+  .field('id', notNull(GraphQLString), 'The id of the character.')
+  .field('name', GraphQLString, 'The name of the character.')
+  .field('friends', listOf(characterInterface),
+    'The friends of the character, or an empty list if they have none')
+  .field('appearsIn', listOf(episodeEnum), 'Which movies they appear in.')
+  .resolve((obj) => {
+    if (starWarsData.Humans[obj.id] !== undefined) {
+      return humanType;
+    }
+    if (starWarsData.Droids[obj.id] !== undefined) {
+      return droidType;
+    }
+    return null;
+  })
+  .end();
 
-graphql(schema, '{ hello(name: "Mark") }').then(result => {
-  console.log(JSON.stringify(result)); // "Hello, Mark"
-});
+const humanType = objectType('Human', [characterInterface],
+    'A humanoid creature in the Star Wars universe.')
+  .field('id', notNull(GraphQLString), 'The id of the human.')
+  .field('name', GraphQLString, 'The name of the human.')
+  .field('friends', listOf(characterInterface),
+    'The friends of the human, or an empty list if they have none', (human) => {
+      return getFriends(human);
+    })
+  .field('appearsIn', listOf(episodeEnum), 'Which movies they appear in.')
+  .field('homePlanet', GraphQLString,
+    'The home planet of the human, or null if unknown.')
+  .end();
+
+const droidType = objectType('Droid', [characterInterface],
+    'A mechanical creature in the Star Wars universe.')
+  .field('id', notNull(GraphQLString), 'The id of the droid.')
+  .field('name', GraphQLString, 'The name of the droid.')
+  .field('friends', listOf(characterInterface),
+    'The friends of the droid, or an empty list if they have none', (droid) => {
+      return getFriends(droid);
+    })
+  .field('appearsIn', listOf(episodeEnum), 'Which movies they appear in.')
+  .field('primaryFunction', GraphQLString, 'The primary function of the droid.')
+  .end();
+
+const queryType = objectType('Query')
+  .field('hero', characterInterface, () => artoo)
+  .field('human', humanType)
+    .arg('id', notNull(GraphQLString))
+    .resolve((root, {id}) => starWarsData.Humans[id])
+  .field('droid', droidType)
+    .arg('id', notNull(GraphQLString))
+    .resolve((root, {id}) => starWarsData.Droids[id])
+  .end();
+
+const starWarsSchema = schemaFrom(queryType);
 ```
 
-## Class Decorators
+## API
 
-### object(name, description = null)
+### enumType(name, description)
 
-## Method Decorators
+Define a new `GraphQLEnumType`
 
-### field(type, description = null)
+##### .value(name, value, description)
+##### .deprecated(deprecationReason)
 
-### arg(type, name, description = null)
+### interfaceType(name, description)
 
-### deprecated(reason)
+Define a new `GraphQLInterfaceType`.
 
-## TODO
+##### .field(name, type, description)
+##### .deprecated(deprecationReason)
+##### .arg(name, type, defaultValue, description)
+##### .resolve(fn)
 
-* Interfaces, enums, deprecation
-* Bind functions to `root`
-* Default types to NotNull and require a `nullable()` wrapper?
+### objectType(name, [interfaces], description)
+
+Define a new `GraphQLObjectType`.
+
+##### .field(name, type, description)
+##### .deprecated(deprecationReason)
+##### .arg(name, type, defaultValue, description)
+##### .resolve(fn)
+
+## schemaFrom(type)
+
+Define a new `GraphQLSchema` from the given type.
+
+## listOf(type)
+
+Define a new `GraphQLList(type)`.
+
+## notNull(type)
+
+Define a new `GraphQLNonNull(type)`.
+
+# Thanks
+
+Thanks to [Florent Cailhol](https://github.com/ooflorent) for the chainable interface idea!
