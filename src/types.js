@@ -12,8 +12,9 @@ export function notNull(type) {
   return new GraphQLNonNull(type);
 }
 
-export function schemaFrom(type) {
+export function schemaFrom(queryRootType, mutationRootType) {
   return new GraphQLSchema({
-    query: type
+    query: queryRootType,
+    mutation: mutationRootType
   });
 }

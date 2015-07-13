@@ -109,7 +109,14 @@ const queryType = objectType('Query')
     .resolve((root, {id}) => starWarsData.Droids[id])
   .end();
 
-const starWarsSchema = schemaFrom(queryType);
+const mutationType = objectType('Mutation')
+  .field('updateCharacterName', characterInterface)
+    .arg('id', notNull(GraphQLString))
+    .arg('newName', notNull(GraphQLString))
+    .resolve((root, {id, newName}) => updateCharacterName(id, newName))
+  .end();
+
+const starWarsSchema = schemaFrom(queryType, mutationType);
 ```
 
 # Cyclic Types
@@ -149,9 +156,9 @@ Define a new `GraphQLObjectType`.
 ##### .arg(name, type, defaultValue, description)
 ##### .resolve(fn)
 
-## schemaFrom(type)
+## schemaFrom(queryRootType, mutationRootType)
 
-Define a new `GraphQLSchema` from the given type.
+Define a new `GraphQLSchema` from the given root types.
 
 ## listOf(type)
 
