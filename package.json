@@ -1,11 +1,12 @@
 {
   "name": "graphql-schema",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Create GraphQL schemas with a fluent/chainable interface",
   "main": "lib/index.js",
   "scripts": {
     "build": "scripts/build",
-    "lint": "scripts/lint"
+    "lint": "scripts/lint",
+    "prepublish": "scripts/prepublish"
   },
   "repository": {
     "type": "git",
