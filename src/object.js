@@ -12,6 +12,11 @@ class Obj extends BaseObject {
     this.__field.resolve = resolve;
     return this;
   }
+  
+  isTypeOf(isTypeOf) {
+    this.__field.isTypeOf = isTypeOf;
+    return this;
+  }
 
   end() {
     return new GraphQLObjectType(super());
