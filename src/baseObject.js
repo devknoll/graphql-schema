@@ -20,7 +20,7 @@ function resolveFields(fields) {
 
 export default class BaseObject {
   constructor(name, interfaces, description) {
-    if (!description) {
+    if (typeof description === 'undefined') {
       /* eslint-disable no-param-reassign */
       description = interfaces;
       interfaces = undefined;
